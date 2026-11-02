@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Plain Volitional Form Drill</title>
+<style>
+:root{--ink:#2b2420;--paper:#faf6ee;--paper2:#f1ead9;--line:#d8cbb0;--accent:#4a7a6a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ink:#ece4d6;--paper:#221d18;--paper2:#2a241d;--line:#4a3f30;--accent:#8fd0b9;}}
+:root[data-theme="dark"]{--ink:#ece4d6;--paper:#221d18;--paper2:#2a241d;--line:#4a3f30;--accent:#8fd0b9;}
+html,body{height:100%;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Iowan Old Style","Palatino Linotype",Georgia,"Hiragino Mincho ProN",serif;line-height:1.45;}
+.wrap{max-width:640px;margin:0 auto;padding:2.2rem 1.1rem 3.5rem;}
+header{margin-bottom:1.6rem;border-bottom:1px solid var(--line);padding-bottom:1rem;}
+h1{font-size:1.4rem;margin:0 0 .3rem;font-weight:600;}
+header p{margin:0 0 .8rem;opacity:.75;font-size:.92rem;max-width:54ch;}
+.rules{font-size:.85rem;display:grid;gap:.4rem;}
+.rules div{background:var(--paper2);border:1px solid var(--line);border-radius:3px;padding:.45rem .65rem;}
+.rules b{color:var(--accent);}
+.row{display:flex;align-items:center;gap:.5rem;padding:.55rem .2rem;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+.num{font-size:.78rem;opacity:.55;width:1.6rem;flex-shrink:0;}
+.word{min-width:8rem;font-size:1rem;flex:1 1 8rem;}
+input{font-family:inherit;font-size:.98rem;padding:.35rem .5rem;border:1px solid var(--line);border-radius:3px;background:var(--paper2);color:var(--ink);flex:1 1 9rem;min-width:7rem;}
+input:focus{outline:2px solid var(--accent);outline-offset:1px;}
+button{font-family:inherit;font-size:.82rem;padding:.35rem .6rem;border-radius:3px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;flex-shrink:0;}
+button:hover{opacity:.85;}
+.ans{font-size:.98rem;display:none;color:var(--accent);flex:1 1 7rem;}
+.ans.show{display:block;}
+footer{text-align:center;font-size:.8rem;opacity:.55;margin-top:2rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>Plain Volitional Form ("let's ~") Drill</h1>
+<p>Convert each verb from its dictionary form to the plain volitional form. Type your answer, then reveal to check.</p>
+<div class="rules">
+<div><b>u-verbs:</b> shift the final sound u→o, add う — 話す→話そう, 書く→書こう</div>
+<div><b>ru-verbs:</b> drop る, add よう — 食べる→食べよう, 見る→見よう</div>
+<div><b>irregular:</b> する→しよう, 来る→来よう</div>
+</div>
+</header>
+<div id="quiz"></div>
+<footer>50 verbs</footer>
+</div>
+<script>
+const verbs = [
+["話す","話そう"],["書く","書こう"],["聞く","聞こう"],["読む","読もう"],["買う","買おう"],
+["待つ","待とう"],["作る","作ろう"],["使う","使おう"],["泳ぐ","泳ごう"],["座る","座ろう"],
+["洗う","洗おう"],["渡る","渡ろう"],["行く","行こう"],["飲む","飲もう"],["帰る","帰ろう"],
+["会う","会おう"],["立つ","立とう"],["死ぬ","死のう"],["遊ぶ","遊ぼう"],["歩く","歩こう"],
+["急ぐ","急ごう"],["休む","休もう"],["働く","働こう"],["住む","住もう"],["送る","送ろう"],
+["運ぶ","運ぼう"],["持つ","持とう"],["歌う","歌おう"],["撮る","撮ろう"],["手伝う","手伝おう"],
+["食べる","食べよう"],["見る","見よう"],["寝る","寝よう"],["起きる","起きよう"],["覚える","覚えよう"],
+["教える","教えよう"],["借りる","借りよう"],["出かける","出かけよう"],["開ける","開けよう"],["閉める","閉めよう"],
+["答える","答えよう"],["掛ける","掛けよう"],["決める","決めよう"],["調べる","調べよう"],["考える","考えよう"],
+["する","しよう"],["来る","来よう"],["勉強する","勉強しよう"],["料理する","料理しよう"],["練習する","練習しよう"]
+];
+
+const quizEl = document.getElementById('quiz');
+verbs.forEach((v, i) => {
+  const row = document.createElement('div');
+  row.className = 'row';
+  row.innerHTML = `
+    <div class="num">${i+1}.</div>
+    <div class="word">${v[0]}</div>
+    <input type="text" placeholder="volitional form" aria-label="Answer ${i+1}">
+    <button class="reveal-btn">Reveal</button>
+    <div class="ans">${v[1]}</div>
+  `;
+  const btn = row.querySelector('.reveal-btn');
+  const ans = row.querySelector('.ans');
+  btn.addEventListener('click', () => {
+    const showing = ans.classList.toggle('show');
+    btn.textContent = showing ? 'Hide' : 'Reveal';
+  });
+  quizEl.appendChild(row);
+});
+</script>
+</body>
+</html>

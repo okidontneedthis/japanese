@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>と思う / と思っている Practice</title>
+<style>
+  :root{
+    --ink:#2b2420;
+    --paper:#faf6ee;
+    --paper2:#f1ead9;
+    --line:#d8cbb0;
+    --accent:#7a5a9e;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#ece4d6;
+      --paper:#221d18;
+      --paper2:#2a241d;
+      --line:#4a3f30;
+      --accent:#c3a8e0;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#ece4d6;
+    --paper:#221d18;
+    --paper2:#2a241d;
+    --line:#4a3f30;
+    --accent:#c3a8e0;
+  }
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family: "Iowan Old Style","Palatino Linotype",Georgia,"Hiragino Mincho ProN",serif;
+    line-height:1.5;
+  }
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:2.5rem 1.25rem 4rem;
+  }
+  header{
+    margin-bottom:2rem;
+    border-bottom:1px solid var(--line);
+    padding-bottom:1.25rem;
+  }
+  h1{
+    font-size:1.5rem;
+    margin:0 0 .35rem;
+    font-weight:600;
+  }
+  header p{
+    margin:0;
+    opacity:.75;
+    font-size:.95rem;
+    max-width:52ch;
+  }
+  .rules{
+    margin-top:1rem;
+    font-size:.87rem;
+    display:grid;
+    gap:.5rem;
+  }
+  .rules div{
+    background:var(--paper2);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:.5rem .7rem;
+  }
+  .rules b{ color:var(--accent); }
+  .section-label{
+    font-size:.8rem;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    opacity:.55;
+    margin:1.6rem 0 .6rem;
+  }
+  .section-label:first-of-type{ margin-top:0; }
+  .card{
+    background:var(--paper2);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:1.25rem 1.35rem;
+    margin-bottom:1.1rem;
+  }
+  .qnum{
+    font-size:.8rem;
+    opacity:.6;
+    margin-bottom:.35rem;
+  }
+  .qtext{
+    font-size:1.05rem;
+    margin-bottom:.85rem;
+  }
+  input[type="text"]{
+    width:100%;
+    font-family:inherit;
+    font-size:1.05rem;
+    padding:.55rem .65rem;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  input[type="text"]:focus{
+    outline:2px solid var(--accent);
+    outline-offset:1px;
+  }
+  .row{
+    display:flex;
+    gap:.6rem;
+    margin-top:.7rem;
+    flex-wrap:wrap;
+  }
+  button{
+    font-family:inherit;
+    font-size:.9rem;
+    padding:.5rem .9rem;
+    border-radius:3px;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  button.primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:var(--paper);
+  }
+  button:hover{ opacity:.85; }
+  .answer{
+    margin-top:.9rem;
+    padding-top:.8rem;
+    border-top:1px dashed var(--line);
+    display:none;
+  }
+  .answer.show{ display:block; }
+  .jp{
+    font-size:1.15rem;
+    margin-bottom:.3rem;
+  }
+  .romaji{
+    font-size:.9rem;
+    opacity:.7;
+    font-style:italic;
+  }
+  footer{
+    text-align:center;
+    font-size:.85rem;
+    opacity:.55;
+    margin-top:2.5rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>と思う / と思っている — "I think that ~"</h1>
+    <p>Translate each sentence into Japanese. Type your attempt, then reveal the answer to check yourself.</p>
+    <div class="rules">
+      <div><b>Verb:</b> plain form + と思う — 降ると思います / 食べたと思います</div>
+      <div><b>イ-adjective:</b> plain form + と思う — おもしろいと思います / たかくないと思います</div>
+      <div><b>ナ-adjective:</b> stem + だ + と思う — しずかだと思います / べんりじゃないと思います</div>
+      <div><b>Noun:</b> + だ + と思う — 先生だと思います</div>
+      <div><b>と思う vs と思っている:</b> と思う works for your own present opinion. For someone else's opinion — or an opinion you've been holding for a while — use と思っている instead of と思う, since flatly asserting what's inside someone else's head with と思う sounds too certain/blunt.</div>
+    </div>
+  </header>
+
+  <div class="section-label">Verbs (1–5)</div>
+  <div id="quiz-verbs"></div>
+
+  <div class="section-label">イ-adjectives (6–10)</div>
+  <div id="quiz-i"></div>
+
+  <div class="section-label">ナ-adjectives (11–15)</div>
+  <div id="quiz-na"></div>
+
+  <div class="section-label">Nouns (16–20)</div>
+  <div id="quiz-noun"></div>
+
+  <footer>20 questions · built from your vocabulary list</footer>
+</div>
+
+<script>
+const groups = [
+  {
+    el: 'quiz-verbs',
+    start: 1,
+    items: [
+      { en: "I think it will rain tomorrow.", jp: "あした雨が降ると思います。", romaji: "Ashita ame ga furu to omoimasu." },
+      { en: "I think he already ate lunch.", jp: "彼はもうひるごはんを食べたと思います。", romaji: "Kare wa mou hirugohan o tabeta to omoimasu." },
+      { en: "I think my friend will come to the party.", jp: "友達はパーティーに来ると思います。", romaji: "Tomodachi wa paatii ni kuru to omoimasu." },
+      { en: "I think my mother will make dinner.", jp: "母はばんごはんを作ると思います。", romaji: "Haha wa bangohan o tsukuru to omoimasu." },
+      { en: "I don't think he will buy that car.", jp: "彼はあの車を買わないと思います。", romaji: "Kare wa ano kuruma o kawanai to omoimasu." }
+    ]
+  },
+  {
+    el: 'quiz-i',
+    start: 6,
+    items: [
+      { en: "I think this book is interesting.", jp: "この本はおもしろいと思います。", romaji: "Kono hon wa omoshiroi to omoimasu." },
+      { en: "I think Japanese is difficult.", jp: "日本語はむずかしいと思います。", romaji: "Nihongo wa muzukashii to omoimasu." },
+      { en: "I think this pen is expensive.", jp: "このペンはたかいと思います。", romaji: "Kono pen wa takai to omoimasu." },
+      { en: "I think that movie was boring.", jp: "あのえいがはつまらなかったと思います。", romaji: "Ano eiga wa tsumaranakatta to omoimasu." },
+      { en: "My friend thinks this song is good.", jp: "友達はこの歌がいいと思っています。", romaji: "Tomodachi wa kono uta ga ii to omotte imasu." }
+    ]
+  },
+  {
+    el: 'quiz-na',
+    start: 11,
+    items: [
+      { en: "I think this room is quiet.", jp: "この部屋はしずかだと思います。", romaji: "Kono heya wa shizuka da to omoimasu." },
+      { en: "I think this town is lively.", jp: "このまちはにぎやかだと思います。", romaji: "Kono machi wa nigiyaka da to omoimasu." },
+      { en: "I think this is convenient.", jp: "これはべんりだと思います。", romaji: "Kore wa benri da to omoimasu." },
+      { en: "My mother thinks this exam is tough.", jp: "母はこのしけんはたいへんだと思っています。", romaji: "Haha wa kono shiken wa taihen da to omotte imasu." },
+      { en: "I don't think this is easy.", jp: "これはかんたんじゃないと思います。", romaji: "Kore wa kantan ja nai to omoimasu." }
+    ]
+  },
+  {
+    el: 'quiz-noun',
+    start: 16,
+    items: [
+      { en: "I think he is a teacher.", jp: "彼は先生だと思います。", romaji: "Kare wa sensei da to omoimasu." },
+      { en: "I think that is my pen.", jp: "あれは私のペンだと思います。", romaji: "Are wa watashi no pen da to omoimasu." },
+      { en: "I think tomorrow is a holiday.", jp: "あしたはやすみだと思います。", romaji: "Ashita wa yasumi da to omoimasu." },
+      { en: "My friend doesn't think this is a good school.", jp: "友達はこの学校はいい学校じゃないと思っています。", romaji: "Tomodachi wa kono gakkou wa ii gakkou ja nai to omotte imasu." },
+      { en: "I think today is Tuesday.", jp: "きょうは火曜日だと思います。", romaji: "Kyou wa kayoubi da to omoimasu." }
+    ]
+  }
+];
+
+groups.forEach(group => {
+  const container = document.getElementById(group.el);
+  group.items.forEach((q, idx) => {
+    const num = group.start + idx;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="qnum">Question ${num} of 20</div>
+      <div class="qtext">${q.en}</div>
+      <input type="text" placeholder="Type your answer in Japanese..." aria-label="Your answer for question ${num}">
+      <div class="row">
+        <button class="primary reveal-btn">Reveal answer</button>
+        <button class="clear-btn" type="button">Clear</button>
+      </div>
+      <div class="answer">
+        <div class="jp">${q.jp}</div>
+        <div class="romaji">${q.romaji}</div>
+      </div>
+    `;
+    const revealBtn = card.querySelector('.reveal-btn');
+    const clearBtn = card.querySelector('.clear-btn');
+    const answerBox = card.querySelector('.answer');
+    const input = card.querySelector('input');
+
+    revealBtn.addEventListener('click', () => {
+      const showing = answerBox.classList.toggle('show');
+      revealBtn.textContent = showing ? 'Hide answer' : 'Reveal answer';
+    });
+    clearBtn.addEventListener('click', () => {
+      input.value = '';
+      input.focus();
+    });
+
+    container.appendChild(card);
+  });
+});
+</script>
+</body>
+</html>

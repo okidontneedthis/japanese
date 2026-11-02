@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Causative Form Practice</title>
+<style>
+  :root{
+    --ink:#2b2420;
+    --paper:#faf6ee;
+    --paper2:#f1ead9;
+    --line:#d8cbb0;
+    --accent:#8a4a5c;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#ece4d6;
+      --paper:#221d18;
+      --paper2:#2a241d;
+      --line:#4a3f30;
+      --accent:#e09aab;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#ece4d6;
+    --paper:#221d18;
+    --paper2:#2a241d;
+    --line:#4a3f30;
+    --accent:#e09aab;
+  }
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family: "Iowan Old Style","Palatino Linotype",Georgia,"Hiragino Mincho ProN",serif;
+    line-height:1.5;
+  }
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:2.5rem 1.25rem 4rem;
+  }
+  header{
+    margin-bottom:2rem;
+    border-bottom:1px solid var(--line);
+    padding-bottom:1.25rem;
+  }
+  h1{
+    font-size:1.5rem;
+    margin:0 0 .35rem;
+    font-weight:600;
+  }
+  header p{
+    margin:0;
+    opacity:.75;
+    font-size:.95rem;
+    max-width:52ch;
+  }
+  .rules{
+    margin-top:1rem;
+    font-size:.88rem;
+    display:grid;
+    gap:.5rem;
+  }
+  .rules div{
+    background:var(--paper2);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:.5rem .7rem;
+  }
+  .rules b{ color:var(--accent); }
+  .card{
+    background:var(--paper2);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:1.25rem 1.35rem;
+    margin-bottom:1.1rem;
+  }
+  .qnum{
+    font-size:.8rem;
+    opacity:.6;
+    margin-bottom:.35rem;
+  }
+  .qtext{
+    font-size:1.05rem;
+    margin-bottom:.85rem;
+  }
+  input[type="text"]{
+    width:100%;
+    font-family:inherit;
+    font-size:1.05rem;
+    padding:.55rem .65rem;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  input[type="text"]:focus{
+    outline:2px solid var(--accent);
+    outline-offset:1px;
+  }
+  .row{
+    display:flex;
+    gap:.6rem;
+    margin-top:.7rem;
+    flex-wrap:wrap;
+  }
+  button{
+    font-family:inherit;
+    font-size:.9rem;
+    padding:.5rem .9rem;
+    border-radius:3px;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  button.primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:var(--paper);
+  }
+  button:hover{ opacity:.85; }
+  .answer{
+    margin-top:.9rem;
+    padding-top:.8rem;
+    border-top:1px dashed var(--line);
+    display:none;
+  }
+  .answer.show{ display:block; }
+  .jp{
+    font-size:1.15rem;
+    margin-bottom:.3rem;
+  }
+  .romaji{
+    font-size:.9rem;
+    opacity:.7;
+    font-style:italic;
+  }
+  footer{
+    text-align:center;
+    font-size:.85rem;
+    opacity:.55;
+    margin-top:2.5rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Causative Form — "make/let someone do ~"</h1>
+    <p>Translate each sentence into Japanese using the causative form. Type your attempt, then reveal the answer.</p>
+    <div class="rules">
+      <div><b>u-verbs (Group 1):</b> change u→a, add せる — 買う→買わせる, 読む→読ませる, 待つ→待たせる, 話す→話させる</div>
+      <div><b>ru-verbs (Group 2):</b> drop る, add させる — 食べる→食べさせる, 見る→見させる</div>
+      <div><b>irregular:</b> する→させる, 来る→来させる</div>
+      <div><b>particle:</b> the person is marked with に if the verb already has an を object (母は私に野菜を食べさせます), or with を if the verb has no other object (先生は学生を待たせました)</div>
+    </div>
+  </header>
+
+  <div id="quiz"></div>
+
+  <footer>10 questions · built from your vocabulary list</footer>
+</div>
+
+<script>
+const questions = [
+  {
+    en: "My mother makes me eat vegetables.",
+    jp: "母は私に野菜を食べさせます。",
+    romaji: "Haha wa watashi ni yasai o tabesasemasu."
+  },
+  {
+    en: "The teacher made the students wait.",
+    jp: "先生は学生を待たせました。",
+    romaji: "Sensei wa gakusei o matasemashita."
+  },
+  {
+    en: "I let my child buy a book.",
+    jp: "私は子どもに本を買わせました。",
+    romaji: "Watashi wa kodomo ni hon o kawasemashita."
+  },
+  {
+    en: "My father made me study English.",
+    jp: "父は私に英語を勉強させました。",
+    romaji: "Chichi wa watashi ni eigo o benkyou sasemashita."
+  },
+  {
+    en: "I let my friend use my pen.",
+    jp: "私は友達にペンを使わせました。",
+    romaji: "Watashi wa tomodachi ni pen o tsukawasemashita."
+  },
+  {
+    en: "My mother made me clean the room.",
+    jp: "母は私に部屋をそうじさせました。",
+    romaji: "Haha wa watashi ni heya o souji sasemashita."
+  },
+  {
+    en: "The teacher let the students speak Japanese.",
+    jp: "先生は学生に日本語を話させました。",
+    romaji: "Sensei wa gakusei ni nihongo o hanasasemashita."
+  },
+  {
+    en: "I made my younger brother wash the dishes.",
+    jp: "私は弟にさらを洗わせました。",
+    romaji: "Watashi wa otouto ni sara o arawasemashita."
+  },
+  {
+    en: "My parents let me travel to Japan.",
+    jp: "両親は私に日本へりょこうさせました。",
+    romaji: "Ryoushin wa watashi ni Nihon e ryokou sasemashita."
+  },
+  {
+    en: "I made my child wait at the station.",
+    jp: "私は子どもに駅で待たせました。",
+    romaji: "Watashi wa kodomo ni eki de matasemashita."
+  }
+];
+
+const quizEl = document.getElementById('quiz');
+
+questions.forEach((q, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="qnum">Question ${i+1} of ${questions.length}</div>
+    <div class="qtext">${q.en}</div>
+    <input type="text" placeholder="Type your answer in Japanese..." aria-label="Your answer for question ${i+1}">
+    <div class="row">
+      <button class="primary reveal-btn">Reveal answer</button>
+      <button class="clear-btn" type="button">Clear</button>
+    </div>
+    <div class="answer">
+      <div class="jp">${q.jp}</div>
+      <div class="romaji">${q.romaji}</div>
+    </div>
+  `;
+  const revealBtn = card.querySelector('.reveal-btn');
+  const clearBtn = card.querySelector('.clear-btn');
+  const answerBox = card.querySelector('.answer');
+  const input = card.querySelector('input');
+
+  revealBtn.addEventListener('click', () => {
+    const showing = answerBox.classList.toggle('show');
+    revealBtn.textContent = showing ? 'Hide answer' : 'Reveal answer';
+  });
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    input.focus();
+  });
+
+  quizEl.appendChild(card);
+});
+</script>
+</body>
+</html>

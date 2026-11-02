@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Causative Form Practice — Part 2</title>
+<style>
+  :root{
+    --ink:#2b2420;
+    --paper:#faf6ee;
+    --paper2:#f1ead9;
+    --line:#d8cbb0;
+    --accent:#8a4a5c;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#ece4d6;--paper:#221d18;--paper2:#2a241d;--line:#4a3f30;--accent:#e09aab;
+    }
+  }
+  :root[data-theme="dark"]{--ink:#ece4d6;--paper:#221d18;--paper2:#2a241d;--line:#4a3f30;--accent:#e09aab;}
+  html,body{height:100%;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Iowan Old Style","Palatino Linotype",Georgia,"Hiragino Mincho ProN",serif;line-height:1.5;}
+  .wrap{max-width:640px;margin:0 auto;padding:2.5rem 1.25rem 4rem;}
+  header{margin-bottom:2rem;border-bottom:1px solid var(--line);padding-bottom:1.25rem;}
+  h1{font-size:1.45rem;margin:0 0 .35rem;font-weight:600;}
+  header p{margin:0;opacity:.75;font-size:.95rem;max-width:52ch;}
+  .rules{margin-top:1rem;font-size:.86rem;display:grid;gap:.5rem;}
+  .rules div{background:var(--paper2);border:1px solid var(--line);border-radius:3px;padding:.5rem .7rem;}
+  .rules b{color:var(--accent);}
+  .card{background:var(--paper2);border:1px solid var(--line);border-radius:4px;padding:1.2rem 1.3rem;margin-bottom:1rem;}
+  .qnum{font-size:.8rem;opacity:.6;margin-bottom:.35rem;}
+  .qtext{font-size:1.03rem;margin-bottom:.8rem;}
+  input[type="text"]{width:100%;font-family:inherit;font-size:1.03rem;padding:.5rem .6rem;border:1px solid var(--line);border-radius:3px;background:var(--paper);color:var(--ink);}
+  input[type="text"]:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .row{display:flex;gap:.6rem;margin-top:.65rem;flex-wrap:wrap;}
+  button{font-family:inherit;font-size:.88rem;padding:.45rem .85rem;border-radius:3px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;}
+  button.primary{background:var(--accent);border-color:var(--accent);color:var(--paper);}
+  button:hover{opacity:.85;}
+  .answer{margin-top:.85rem;padding-top:.75rem;border-top:1px dashed var(--line);display:none;}
+  .answer.show{display:block;}
+  .jp{font-size:1.1rem;margin-bottom:.3rem;}
+  .romaji{font-size:.88rem;opacity:.7;font-style:italic;}
+  footer{text-align:center;font-size:.85rem;opacity:.55;margin-top:2.5rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Causative Form Practice — Part 2</h1>
+    <p>20 more sentences for "make/let someone do ~". Type your attempt, then reveal the answer.</p>
+    <div class="rules">
+      <div><b>u-verbs:</b> u→a, add せる — 読む→読ませる, 買う→買わせる, 働く→働かせる</div>
+      <div><b>ru-verbs:</b> drop る, add させる — 開ける→開けさせる, 決める→決めさせる</div>
+      <div><b>irregular:</b> する→させる, 来る→来させる</div>
+      <div><b>particle:</b> に when the verb already has an を object; を when there's no other object competing for it</div>
+    </div>
+  </header>
+
+  <div id="quiz"></div>
+
+  <footer>20 questions</footer>
+</div>
+
+<script>
+const questions = [
+  { en: "My mother makes me clean my room.", jp: "母は私に部屋をそうじさせます。", romaji: "Haha wa watashi ni heya o souji sasemasu." },
+  { en: "The teacher made the student read a book.", jp: "先生は学生に本を読ませました。", romaji: "Sensei wa gakusei ni hon o yomasemashita." },
+  { en: "I won't let my child buy that car.", jp: "私は子どもにあの車を買わせません。", romaji: "Watashi wa kodomo ni ano kuruma o kawasemasen." },
+  { en: "My father made me sing a song.", jp: "父は私に歌を歌わせました。", romaji: "Chichi wa watashi ni uta o utawasemashita." },
+  { en: "The teacher made the students work.", jp: "先生は学生を働かせました。", romaji: "Sensei wa gakusei o hatarakasemashita." },
+  { en: "I'll let my friend use my car.", jp: "私は友達に車を使わせます。", romaji: "Watashi wa tomodachi ni kuruma o tsukawasemasu." },
+  { en: "My mother made me wait at the station.", jp: "母は私を駅で待たせました。", romaji: "Haha wa watashi o eki de matasemashita." },
+  { en: "The teacher won't let the students speak English.", jp: "先生は学生に英語を話させません。", romaji: "Sensei wa gakusei ni eigo o hanasasemasen." },
+  { en: "I made my younger brother carry the book.", jp: "私は弟に本を運ばせました。", romaji: "Watashi wa otouto ni hon o hakobasemashita." },
+  { en: "My parents let me travel to Osaka.", jp: "両親は私に大阪へりょこうさせました。", romaji: "Ryoushin wa watashi ni Oosaka e ryokou sasemashita." },
+  { en: "I made my friend wash the dishes.", jp: "私は友達にさらを洗わせました。", romaji: "Watashi wa tomodachi ni sara o arawasemashita." },
+  { en: "The teacher let the students rest.", jp: "先生は学生を休ませました。", romaji: "Sensei wa gakusei o yasumasemashita." },
+  { en: "I won't make my child study tonight.", jp: "私は今夜子どもに勉強させません。", romaji: "Watashi wa kon'ya kodomo ni benkyou sasemasen." },
+  { en: "The teacher made me come to school early.", jp: "先生は私を朝早く学校に来させました。", romaji: "Sensei wa watashi o asa hayaku gakkou ni kosasemashita." },
+  { en: "I let my friend decide the plan.", jp: "私は友達に予定を決めさせました。", romaji: "Watashi wa tomodachi ni yotei o kimesasemashita." },
+  { en: "My mother made me open the window.", jp: "母は私にまどを開けさせました。", romaji: "Haha wa watashi ni mado o akesasemashita." },
+  { en: "My father let me choose the book.", jp: "父は私に本を選ばせました。", romaji: "Chichi wa watashi ni hon o erabasemashita." },
+  { en: "The teacher made the students practice Japanese.", jp: "先生は学生に日本語を練習させました。", romaji: "Sensei wa gakusei ni nihongo o renshuu sasemashita." },
+  { en: "I let my younger brother drink the coffee.", jp: "私は弟にコーヒーを飲ませました。", romaji: "Watashi wa otouto ni koohii o nomasemashita." },
+  { en: "My mother won't let me go out tonight.", jp: "母は今夜私を出かけさせません。", romaji: "Haha wa kon'ya watashi o dekakesasemasen." }
+];
+
+const quizEl = document.getElementById('quiz');
+
+questions.forEach((q, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="qnum">Question ${i+1} of ${questions.length}</div>
+    <div class="qtext">${q.en}</div>
+    <input type="text" placeholder="Type your answer in Japanese..." aria-label="Your answer for question ${i+1}">
+    <div class="row">
+      <button class="primary reveal-btn">Reveal answer</button>
+      <button class="clear-btn" type="button">Clear</button>
+    </div>
+    <div class="answer">
+      <div class="jp">${q.jp}</div>
+      <div class="romaji">${q.romaji}</div>
+    </div>
+  `;
+  const revealBtn = card.querySelector('.reveal-btn');
+  const clearBtn = card.querySelector('.clear-btn');
+  const answerBox = card.querySelector('.answer');
+  const input = card.querySelector('input');
+
+  revealBtn.addEventListener('click', () => {
+    const showing = answerBox.classList.toggle('show');
+    revealBtn.textContent = showing ? 'Hide answer' : 'Reveal answer';
+  });
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    input.focus();
+  });
+
+  quizEl.appendChild(card);
+});
+</script>
+</body>
+</html>

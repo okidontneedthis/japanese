@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Conjecture & Hearsay Grammar Practice — Part 2</title>
+<style>
+  :root{
+    --ink:#2b2420;
+    --paper:#faf6ee;
+    --paper2:#f1ead9;
+    --line:#d8cbb0;
+    --accent:#8a6a3f;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#ece4d6;
+      --paper:#221d18;
+      --paper2:#2a241d;
+      --line:#4a3f30;
+      --accent:#e0b97f;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#ece4d6;
+    --paper:#221d18;
+    --paper2:#2a241d;
+    --line:#4a3f30;
+    --accent:#e0b97f;
+  }
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family: "Iowan Old Style","Palatino Linotype",Georgia,"Hiragino Mincho ProN",serif;
+    line-height:1.5;
+  }
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:2.5rem 1.25rem 4rem;
+  }
+  header{
+    margin-bottom:2rem;
+    border-bottom:1px solid var(--line);
+    padding-bottom:1.25rem;
+  }
+  h1{
+    font-size:1.4rem;
+    margin:0 0 .35rem;
+    font-weight:600;
+  }
+  header p{
+    margin:0;
+    opacity:.75;
+    font-size:.95rem;
+    max-width:52ch;
+  }
+  .section{
+    margin-top:1.8rem;
+    margin-bottom:.7rem;
+  }
+  .section h2{
+    font-size:1.05rem;
+    margin:0 0 .4rem;
+    font-weight:600;
+    color:var(--accent);
+  }
+  .section .desc{
+    font-size:.85rem;
+    opacity:.75;
+    background:var(--paper2);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:.5rem .7rem;
+    margin-bottom:.9rem;
+  }
+  .card{
+    background:var(--paper2);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:1.25rem 1.35rem;
+    margin-bottom:1.1rem;
+  }
+  .qnum{
+    font-size:.8rem;
+    opacity:.6;
+    margin-bottom:.35rem;
+  }
+  .qtext{
+    font-size:1.05rem;
+    margin-bottom:.85rem;
+  }
+  input[type="text"]{
+    width:100%;
+    font-family:inherit;
+    font-size:1.05rem;
+    padding:.55rem .65rem;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  input[type="text"]:focus{
+    outline:2px solid var(--accent);
+    outline-offset:1px;
+  }
+  .row{
+    display:flex;
+    gap:.6rem;
+    margin-top:.7rem;
+    flex-wrap:wrap;
+  }
+  button{
+    font-family:inherit;
+    font-size:.9rem;
+    padding:.5rem .9rem;
+    border-radius:3px;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  button.primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:var(--paper);
+  }
+  button:hover{ opacity:.85; }
+  .answer{
+    margin-top:.9rem;
+    padding-top:.8rem;
+    border-top:1px dashed var(--line);
+    display:none;
+  }
+  .answer.show{ display:block; }
+  .jp{
+    font-size:1.15rem;
+    margin-bottom:.3rem;
+  }
+  .romaji{
+    font-size:.9rem;
+    opacity:.7;
+    font-style:italic;
+  }
+  footer{
+    text-align:center;
+    font-size:.85rem;
+    opacity:.55;
+    margin-top:2.5rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Conjecture & Hearsay Grammar — Part 2</h1>
+    <p>Same 7 grammar points, now mixed across past/non-past tense and affirmative/negative forms. Type your attempt, then reveal the answer.</p>
+  </header>
+
+  <div id="quiz"></div>
+
+  <footer>35 questions · varied tense & polarity</footer>
+</div>
+
+<script>
+const sections = [
+  {
+    title: "そうです — I heard that ~",
+    desc: "Plain form + そうです. This round mixes past verbs, negative verbs, negative い-adj, negative な-adj, and past nouns.",
+    items: [
+      { en: "I heard it rained yesterday.", jp: "きのう雨が降ったそうです。", romaji: "Kinou ame ga futta sou desu." },
+      { en: "I heard he doesn't eat natto.", jp: "彼はなっとうを食べないそうです。", romaji: "Kare wa nattou o tabenai sou desu." },
+      { en: "I heard the exam wasn't difficult.", jp: "しけんはむずかしくなかったそうです。", romaji: "Shiken wa muzukashikunakatta sou desu." },
+      { en: "I heard this town isn't lively.", jp: "このまちはにぎやかじゃないそうです。", romaji: "Kono machi wa nigiyaka ja nai sou desu." },
+      { en: "I heard he was a teacher.", jp: "彼は先生だったそうです。", romaji: "Kare wa sensei datta sou desu." }
+    ]
+  },
+  {
+    title: "ようです — it seems / looks like ~",
+    desc: "Plain form + ようです. Mixing a past verb with negative verb, い-adj, な-adj, and noun.",
+    items: [
+      { en: "It seems like it rained last night.", jp: "ゆうべ雨が降ったようです。", romaji: "Yuube ame ga futta you desu." },
+      { en: "This book doesn't seem interesting.", jp: "この本はおもしろくないようです。", romaji: "Kono hon wa omoshirokunai you desu." },
+      { en: "This room doesn't seem quiet.", jp: "この部屋はしずかじゃないようです。", romaji: "Kono heya wa shizuka ja nai you desu." },
+      { en: "He doesn't seem to be a student.", jp: "彼は学生じゃないようです。", romaji: "Kare wa gakusei ja nai you desu." },
+      { en: "My friend doesn't seem to be coming to school today.", jp: "友達はきょう学校に来ないようです。", romaji: "Tomodachi wa kyou gakkou ni konai you desu." }
+    ]
+  },
+  {
+    title: "でしょう — probably ~ / isn't it?",
+    desc: "Plain form + でしょう. Mixing a past verb, negative い-adj, past な-adj, negative noun, and negative verb.",
+    items: [
+      { en: "It probably rained yesterday.", jp: "きのう雨が降ったでしょう。", romaji: "Kinou ame ga futta deshou." },
+      { en: "This exam probably isn't difficult.", jp: "このしけんはむずかしくないでしょう。", romaji: "Kono shiken wa muzukashikunai deshou." },
+      { en: "This town was probably lively.", jp: "このまちはにぎやかだったでしょう。", romaji: "Kono machi wa nigiyaka datta deshou." },
+      { en: "He's probably not a teacher.", jp: "彼は先生じゃないでしょう。", romaji: "Kare wa sensei ja nai deshou." },
+      { en: "My friend probably won't buy that car.", jp: "友達はあの車を買わないでしょう。", romaji: "Tomodachi wa ano kuruma o kawanai deshou." }
+    ]
+  },
+  {
+    title: "かもしれません — might / maybe ~",
+    desc: "Plain form + かもしれません. Mixing past, negative, and past-negative forms across verbs, adjectives, and nouns.",
+    items: [
+      { en: "It might have rained yesterday.", jp: "きのう雨が降ったかもしれません。", romaji: "Kinou ame ga futta kamoshiremasen." },
+      { en: "This book might not be interesting.", jp: "この本はおもしろくないかもしれません。", romaji: "Kono hon wa omoshirokunai kamoshiremasen." },
+      { en: "This room might not have been quiet.", jp: "この部屋はしずかじゃなかったかもしれません。", romaji: "Kono heya wa shizuka ja nakatta kamoshiremasen." },
+      { en: "He might have been a teacher.", jp: "彼は先生だったかもしれません。", romaji: "Kare wa sensei datta kamoshiremasen." },
+      { en: "My friend might not come to school tomorrow.", jp: "友達はあした学校に来ないかもしれません。", romaji: "Tomodachi wa ashita gakkou ni konai kamoshiremasen." }
+    ]
+  },
+  {
+    title: "予定です — I plan to ~ / it's scheduled",
+    desc: "Verb plain form + 予定です. This round adds negative plans (not planning to) and past tense (予定でした / 予定ではありません, for plans that were or weren't scheduled).",
+    items: [
+      { en: "I'm not planning to go to Japan next year.", jp: "来年、日本へ行かない予定です。", romaji: "Rainen, Nihon e ikanai yotei desu." },
+      { en: "I had planned to study English yesterday.", jp: "きのう、英語を勉強する予定でした。", romaji: "Kinou, eigo o benkyou suru yotei deshita." },
+      { en: "The exam isn't scheduled for next week.", jp: "しけんは来週の予定ではありません。", romaji: "Shiken wa raishuu no yotei de wa arimasen." },
+      { en: "I'm planning to buy a new car next month.", jp: "来月、新しい車を買う予定です。", romaji: "Raigetsu, atarashii kuruma o kau yotei desu." },
+      { en: "We were planning to travel to Japan last year.", jp: "きょねん、日本へりょこうする予定でした。", romaji: "Kyonen, Nihon e ryokou suru yotei deshita." }
+    ]
+  },
+  {
+    title: "らしいです — apparently ~",
+    desc: "Plain form + らしいです. Mixing past, negative, and past-negative forms.",
+    items: [
+      { en: "Apparently it rained yesterday.", jp: "きのう雨が降ったらしいです。", romaji: "Kinou ame ga futta rashii desu." },
+      { en: "Apparently this exam isn't difficult.", jp: "このしけんはむずかしくないらしいです。", romaji: "Kono shiken wa muzukashikunai rashii desu." },
+      { en: "Apparently this town wasn't lively.", jp: "このまちはにぎやかじゃなかったらしいです。", romaji: "Kono machi wa nigiyaka ja nakatta rashii desu." },
+      { en: "Apparently he isn't a student.", jp: "彼は学生じゃないらしいです。", romaji: "Kare wa gakusei ja nai rashii desu." },
+      { en: "Apparently my friend won't come to the party.", jp: "友達はパーティーに来ないらしいです。", romaji: "Tomodachi wa paatii ni konai rashii desu." }
+    ]
+  },
+  {
+    title: "はずです — I expect ~ / it should be ~",
+    desc: "Plain form + はずです. Mixing past, negative, and past-negative forms.",
+    items: [
+      { en: "It should have rained yesterday.", jp: "きのう雨が降ったはずです。", romaji: "Kinou ame ga futta hazu desu." },
+      { en: "This exam shouldn't be difficult.", jp: "このしけんはむずかしくないはずです。", romaji: "Kono shiken wa muzukashikunai hazu desu." },
+      { en: "This room shouldn't be quiet.", jp: "この部屋はしずかじゃないはずです。", romaji: "Kono heya wa shizuka ja nai hazu desu." },
+      { en: "He should have been a teacher.", jp: "彼は先生だったはずです。", romaji: "Kare wa sensei datta hazu desu." },
+      { en: "My friend shouldn't be coming to school tomorrow.", jp: "友達はあした学校に来ないはずです。", romaji: "Tomodachi wa ashita gakkou ni konai hazu desu." }
+    ]
+  }
+];
+
+const quizEl = document.getElementById('quiz');
+let counter = 0;
+
+sections.forEach(section => {
+  const sectionDiv = document.createElement('div');
+  sectionDiv.className = 'section';
+  sectionDiv.innerHTML = `<h2>${section.title}</h2><div class="desc">${section.desc}</div>`;
+  quizEl.appendChild(sectionDiv);
+
+  section.items.forEach(q => {
+    counter++;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="qnum">Question ${counter} of 35</div>
+      <div class="qtext">${q.en}</div>
+      <input type="text" placeholder="Type your answer in Japanese..." aria-label="Your answer for question ${counter}">
+      <div class="row">
+        <button class="primary reveal-btn">Reveal answer</button>
+        <button class="clear-btn" type="button">Clear</button>
+      </div>
+      <div class="answer">
+        <div class="jp">${q.jp}</div>
+        <div class="romaji">${q.romaji}</div>
+      </div>
+    `;
+    const revealBtn = card.querySelector('.reveal-btn');
+    const clearBtn = card.querySelector('.clear-btn');
+    const answerBox = card.querySelector('.answer');
+    const input = card.querySelector('input');
+
+    revealBtn.addEventListener('click', () => {
+      const showing = answerBox.classList.toggle('show');
+      revealBtn.textContent = showing ? 'Hide answer' : 'Reveal answer';
+    });
+    clearBtn.addEventListener('click', () => {
+      input.value = '';
+      input.focus();
+    });
+
+    quizEl.appendChild(card);
+  });
+});
+</script>
+</body>
+</html>

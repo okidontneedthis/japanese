@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Potential Form Practice</title>
+<style>
+  :root{
+    --ink:#2b2420;
+    --paper:#faf6ee;
+    --paper2:#f1ead9;
+    --line:#d8cbb0;
+    --accent:#4a5c8a;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#ece4d6;
+      --paper:#221d18;
+      --paper2:#2a241d;
+      --line:#4a3f30;
+      --accent:#9db4e0;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#ece4d6;
+    --paper:#221d18;
+    --paper2:#2a241d;
+    --line:#4a3f30;
+    --accent:#9db4e0;
+  }
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family: "Iowan Old Style","Palatino Linotype",Georgia,"Hiragino Mincho ProN",serif;
+    line-height:1.5;
+  }
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:2.5rem 1.25rem 4rem;
+  }
+  header{
+    margin-bottom:2rem;
+    border-bottom:1px solid var(--line);
+    padding-bottom:1.25rem;
+  }
+  h1{
+    font-size:1.5rem;
+    margin:0 0 .35rem;
+    font-weight:600;
+  }
+  header p{
+    margin:0;
+    opacity:.75;
+    font-size:.95rem;
+    max-width:52ch;
+  }
+  .rules{
+    margin-top:1rem;
+    font-size:.88rem;
+    display:grid;
+    gap:.5rem;
+  }
+  .rules div{
+    background:var(--paper2);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:.5rem .7rem;
+  }
+  .rules b{ color:var(--accent); }
+  .card{
+    background:var(--paper2);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:1.25rem 1.35rem;
+    margin-bottom:1.1rem;
+  }
+  .qnum{
+    font-size:.8rem;
+    opacity:.6;
+    margin-bottom:.35rem;
+  }
+  .qtext{
+    font-size:1.05rem;
+    margin-bottom:.85rem;
+  }
+  input[type="text"]{
+    width:100%;
+    font-family:inherit;
+    font-size:1.05rem;
+    padding:.55rem .65rem;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  input[type="text"]:focus{
+    outline:2px solid var(--accent);
+    outline-offset:1px;
+  }
+  .row{
+    display:flex;
+    gap:.6rem;
+    margin-top:.7rem;
+    flex-wrap:wrap;
+  }
+  button{
+    font-family:inherit;
+    font-size:.9rem;
+    padding:.5rem .9rem;
+    border-radius:3px;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  button.primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:var(--paper);
+  }
+  button:hover{ opacity:.85; }
+  .answer{
+    margin-top:.9rem;
+    padding-top:.8rem;
+    border-top:1px dashed var(--line);
+    display:none;
+  }
+  .answer.show{ display:block; }
+  .jp{
+    font-size:1.15rem;
+    margin-bottom:.3rem;
+  }
+  .romaji{
+    font-size:.9rem;
+    opacity:.7;
+    font-style:italic;
+  }
+  footer{
+    text-align:center;
+    font-size:.85rem;
+    opacity:.55;
+    margin-top:2.5rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Potential Form — "can do ~"</h1>
+    <p>Translate each sentence into Japanese using the potential form. Type your attempt, then reveal the answer.</p>
+    <div class="rules">
+      <div><b>u-verbs (Group 1):</b> change the final u-sound to e-sound + る — 話す→話せる, 買う→買える, 読む→読める</div>
+      <div><b>ru-verbs (Group 2):</b> drop る, add られる — 食べる→食べられる, 見る→見られる</div>
+      <div><b>irregular:</b> する→できる, 来る→来られる</div>
+    </div>
+  </header>
+
+  <div id="quiz"></div>
+
+  <footer>10 questions · built from your vocabulary list</footer>
+</div>
+
+<script>
+const questions = [
+  {
+    en: "I can speak Japanese.",
+    jp: "日本語が話せます。",
+    romaji: "Nihongo ga hanasemasu."
+  },
+  {
+    en: "I can't eat natto.",
+    jp: "なっとうが食べられません。",
+    romaji: "Nattou ga taberaremasen."
+  },
+  {
+    en: "Can you swim?",
+    jp: "およげますか。",
+    romaji: "Oyogemasu ka."
+  },
+  {
+    en: "I can read kanji.",
+    jp: "かん字が読めます。",
+    romaji: "Kanji ga yomemasu."
+  },
+  {
+    en: "I can make tempura.",
+    jp: "てんぷらが作れます。",
+    romaji: "Tenpura ga tsukuremasu."
+  },
+  {
+    en: "I can't buy that car.",
+    jp: "あの車が買えません。",
+    romaji: "Ano kuruma ga kaemasen."
+  },
+  {
+    en: "I can wait until tomorrow.",
+    jp: "あしたまで待てます。",
+    romaji: "Ashita made matemasu."
+  },
+  {
+    en: "Can you come to the party tomorrow?",
+    jp: "あしたパーティーに来られますか。",
+    romaji: "Ashita paatii ni koraremasu ka."
+  },
+  {
+    en: "I can use chopsticks.",
+    jp: "はしが使えます。",
+    romaji: "Hashi ga tsukaemasu."
+  },
+  {
+    en: "I can listen to music here.",
+    jp: "ここでおんがくが聞けます。",
+    romaji: "Koko de ongaku ga kikemasu."
+  }
+];
+
+const quizEl = document.getElementById('quiz');
+
+questions.forEach((q, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="qnum">Question ${i+1} of ${questions.length}</div>
+    <div class="qtext">${q.en}</div>
+    <input type="text" placeholder="Type your answer in Japanese..." aria-label="Your answer for question ${i+1}">
+    <div class="row">
+      <button class="primary reveal-btn">Reveal answer</button>
+      <button class="clear-btn" type="button">Clear</button>
+    </div>
+    <div class="answer">
+      <div class="jp">${q.jp}</div>
+      <div class="romaji">${q.romaji}</div>
+    </div>
+  `;
+  const revealBtn = card.querySelector('.reveal-btn');
+  const clearBtn = card.querySelector('.clear-btn');
+  const answerBox = card.querySelector('.answer');
+  const input = card.querySelector('input');
+
+  revealBtn.addEventListener('click', () => {
+    const showing = answerBox.classList.toggle('show');
+    revealBtn.textContent = showing ? 'Hide answer' : 'Reveal answer';
+  });
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    input.focus();
+  });
+
+  quizEl.appendChild(card);
+});
+</script>
+</body>
+</html>

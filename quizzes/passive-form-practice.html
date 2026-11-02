@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Passive Form Drill</title>
+<style>
+:root{--ink:#2b2420;--paper:#faf6ee;--paper2:#f1ead9;--line:#d8cbb0;--accent:#9a5a2f;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ink:#ece4d6;--paper:#221d18;--paper2:#2a241d;--line:#4a3f30;--accent:#e8b184;}}
+:root[data-theme="dark"]{--ink:#ece4d6;--paper:#221d18;--paper2:#2a241d;--line:#4a3f30;--accent:#e8b184;}
+html,body{height:100%;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Iowan Old Style","Palatino Linotype",Georgia,"Hiragino Mincho ProN",serif;line-height:1.45;}
+.wrap{max-width:640px;margin:0 auto;padding:2.2rem 1.1rem 3.5rem;}
+header{margin-bottom:1.6rem;border-bottom:1px solid var(--line);padding-bottom:1rem;}
+h1{font-size:1.4rem;margin:0 0 .3rem;font-weight:600;}
+header p{margin:0 0 .8rem;opacity:.75;font-size:.92rem;max-width:54ch;}
+.rules{font-size:.85rem;display:grid;gap:.4rem;}
+.rules div{background:var(--paper2);border:1px solid var(--line);border-radius:3px;padding:.45rem .65rem;}
+.rules b{color:var(--accent);}
+.section-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;opacity:.55;margin:1.5rem 0 .3rem;}
+.row{display:flex;align-items:center;gap:.5rem;padding:.55rem .2rem;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+.num{font-size:.78rem;opacity:.55;width:1.6rem;flex-shrink:0;}
+.word{min-width:8.5rem;font-size:1.05rem;flex:1 1 8.5rem;}
+.word small{font-size:.8rem;opacity:.65;margin-left:.2rem;}
+input{font-family:inherit;font-size:.98rem;padding:.35rem .5rem;border:1px solid var(--line);border-radius:3px;background:var(--paper2);color:var(--ink);flex:1 1 9rem;min-width:7rem;}
+input:focus{outline:2px solid var(--accent);outline-offset:1px;}
+button{font-family:inherit;font-size:.82rem;padding:.35rem .6rem;border-radius:3px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;flex-shrink:0;}
+button:hover{opacity:.85;}
+.ans{font-size:.98rem;display:none;color:var(--accent);flex:1 1 7rem;}
+.ans.show{display:block;}
+footer{text-align:center;font-size:.8rem;opacity:.55;margin-top:2rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<h1>Passive Form Drill — 〜れる / 〜られる</h1>
+<p>Convert each verb from dictionary form to the passive form. The hiragana reading is shown next to each kanji. Type your answer, then reveal to check.</p>
+<div class="rules">
+<div><b>u-verbs:</b> change the final u-sound to the a-sound, add れる (う→わ) — 書く→書かれる, 買う→買われる</div>
+<div><b>ru-verbs:</b> drop る, add られる — 食べる→食べられる, 見る→見られる</div>
+<div><b>irregular:</b> する→される, 来る→来られる</div>
+</div>
+</header>
+
+<div class="section-label">Mixed — 50 verbs</div>
+<div id="quiz"></div>
+<footer>50 verbs</footer>
+</div>
+<script>
+// [kanji, reading, passive]
+const verbs = [
+["話す","はなす","話される"],
+["食べる","たべる","食べられる"],
+["書く","かく","書かれる"],
+["する","する","される"],
+["買う","かう","買われる"],
+["見る","みる","見られる"],
+["呼ぶ","よぶ","呼ばれる"],
+["褒める","ほめる","褒められる"],
+["読む","よむ","読まれる"],
+["叱る","しかる","叱られる"],
+["待つ","まつ","待たれる"],
+["教える","おしえる","教えられる"],
+["作る","つくる","作られる"],
+["来る","くる","来られる"],
+["使う","つかう","使われる"],
+["盗む","ぬすむ","盗まれる"],
+["泳ぐ","およぐ","泳がれる"],
+["助ける","たすける","助けられる"],
+["洗う","あらう","洗われる"],
+["忘れる","わすれる","忘れられる"],
+["飲む","のむ","飲まれる"],
+["笑う","わらう","笑われる"],
+["調べる","しらべる","調べられる"],
+["押す","おす","押される"],
+["踏む","ふむ","踏まれる"],
+["決める","きめる","決められる"],
+["殴る","なぐる","殴られる"],
+["誘う","さそう","誘われる"],
+["開ける","あける","開けられる"],
+["頼む","たのむ","頼まれる"],
+["送る","おくる","送られる"],
+["閉める","しめる","閉められる"],
+["運ぶ","はこぶ","運ばれる"],
+["歌う","うたう","歌われる"],
+["見せる","みせる","見せられる"],
+["持つ","もつ","持たれる"],
+["嫌う","きらう","嫌われる"],
+["捨てる","すてる","捨てられる"],
+["取る","とる","取られる"],
+["招く","まねく","招かれる"],
+["集める","あつめる","集められる"],
+["壊す","こわす","壊される"],
+["開く","ひらく","開かれる"],
+["覚える","おぼえる","覚えられる"],
+["払う","はらう","払われる"],
+["信じる","しんじる","信じられる"],
+["勉強する","べんきょうする","勉強される"],
+["注意する","ちゅういする","注意される"],
+["招待する","しょうたいする","招待される"],
+["聞く","きく","聞かれる"]
+];
+
+const quizEl = document.getElementById('quiz');
+verbs.forEach((v, i) => {
+  const row = document.createElement('div');
+  row.className = 'row';
+  const reading = (v[0] === v[1]) ? '' : `<small>(${v[1]})</small>`;
+  row.innerHTML = `
+    <div class="num">${i+1}.</div>
+    <div class="word">${v[0]}${reading}</div>
+    <input type="text" placeholder="passive form" aria-label="Answer ${i+1}">
+    <button class="reveal-btn">Reveal</button>
+    <div class="ans">${v[2]}</div>
+  `;
+  const btn = row.querySelector('.reveal-btn');
+  const ans = row.querySelector('.ans');
+  btn.addEventListener('click', () => {
+    const showing = ans.classList.toggle('show');
+    btn.textContent = showing ? 'Hide' : 'Reveal';
+  });
+  quizEl.appendChild(row);
+});
+</script>
+</body>
+</html>

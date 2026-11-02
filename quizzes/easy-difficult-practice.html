@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>やすい / にくい Practice</title>
+<style>
+  :root{
+    --ink:#2b2420;
+    --paper:#faf6ee;
+    --paper2:#f1ead9;
+    --line:#d8cbb0;
+    --accent:#3f6e5c;
+    --wrong:#a3423a;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#ece4d6;
+      --paper:#221d18;
+      --paper2:#2a241d;
+      --line:#4a3f30;
+      --accent:#7fbba3;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#ece4d6;
+    --paper:#221d18;
+    --paper2:#2a241d;
+    --line:#4a3f30;
+    --accent:#7fbba3;
+  }
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family: "Iowan Old Style","Palatino Linotype",Georgia,"Hiragino Mincho ProN",serif;
+    line-height:1.5;
+  }
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:2.5rem 1.25rem 4rem;
+  }
+  header{
+    margin-bottom:2rem;
+    border-bottom:1px solid var(--line);
+    padding-bottom:1.25rem;
+  }
+  h1{
+    font-size:1.5rem;
+    margin:0 0 .35rem;
+    font-weight:600;
+  }
+  header p{
+    margin:0;
+    opacity:.75;
+    font-size:.95rem;
+    max-width:52ch;
+  }
+  .rule{
+    display:flex;
+    gap:1.25rem;
+    margin-top:1rem;
+    font-size:.9rem;
+  }
+  .rule div{ flex:1; }
+  .rule b{ color:var(--accent); }
+  .card{
+    background:var(--paper2);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:1.25rem 1.35rem;
+    margin-bottom:1.1rem;
+  }
+  .qnum{
+    font-size:.8rem;
+    opacity:.6;
+    margin-bottom:.35rem;
+  }
+  .qtext{
+    font-size:1.05rem;
+    margin-bottom:.85rem;
+  }
+  input[type="text"]{
+    width:100%;
+    font-family:inherit;
+    font-size:1.05rem;
+    padding:.55rem .65rem;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  input[type="text"]:focus{
+    outline:2px solid var(--accent);
+    outline-offset:1px;
+  }
+  .row{
+    display:flex;
+    gap:.6rem;
+    margin-top:.7rem;
+    flex-wrap:wrap;
+  }
+  button{
+    font-family:inherit;
+    font-size:.9rem;
+    padding:.5rem .9rem;
+    border-radius:3px;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  button.primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:var(--paper);
+  }
+  button:hover{ opacity:.85; }
+  .answer{
+    margin-top:.9rem;
+    padding-top:.8rem;
+    border-top:1px dashed var(--line);
+    display:none;
+  }
+  .answer.show{ display:block; }
+  .jp{
+    font-size:1.15rem;
+    margin-bottom:.3rem;
+  }
+  .romaji{
+    font-size:.9rem;
+    opacity:.7;
+    font-style:italic;
+  }
+  footer{
+    text-align:center;
+    font-size:.85rem;
+    opacity:.55;
+    margin-top:2.5rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>やすい / にくい — easy & difficult to do</h1>
+    <p>Translate each sentence into Japanese. Type your attempt, then reveal the answer to check yourself.</p>
+    <div class="rule">
+      <div><b>〜やすい</b> "easy to do ~" — verb ます-stem + やすい</div>
+      <div><b>〜にくい</b> "hard to do ~" — verb ます-stem + にくい</div>
+    </div>
+  </header>
+
+  <div id="quiz"></div>
+
+  <footer>10 questions · built from your vocabulary list</footer>
+</div>
+
+<script>
+const questions = [
+  {
+    en: "This book is easy to read.",
+    jp: "この本は読みやすいです。",
+    romaji: "Kono hon wa yomiyasui desu."
+  },
+  {
+    en: "Kanji are difficult to write.",
+    jp: "かん字は書きにくいです。",
+    romaji: "Kanji wa kakinikui desu."
+  },
+  {
+    en: "This pen is easy to use.",
+    jp: "このペンは使いやすいです。",
+    romaji: "Kono pen wa tsukaiyasui desu."
+  },
+  {
+    en: "This song is easy to remember.",
+    jp: "この歌は覚えやすいです。",
+    romaji: "Kono uta wa oboeyasui desu."
+  },
+  {
+    en: "This yakitori is easy to eat.",
+    jp: "このやきとりは食べやすいです。",
+    romaji: "Kono yakitori wa tabeyasui desu."
+  },
+  {
+    en: "Japanese is difficult to speak.",
+    jp: "日本語は話しにくいです。",
+    romaji: "Nihongo wa hanashinikui desu."
+  },
+  {
+    en: "This chair is easy to sit on.",
+    jp: "このいすは座りやすいです。",
+    romaji: "Kono isu wa suwariyasui desu."
+  },
+  {
+    en: "This bridge is difficult to cross.",
+    jp: "この橋はわたりにくいです。",
+    romaji: "Kono hashi wa watarinikui desu."
+  },
+  {
+    en: "This letter is easy to read.",
+    jp: "この手紙は読みやすいです。",
+    romaji: "Kono tegami wa yomiyasui desu."
+  },
+  {
+    en: "This question is difficult to understand.",
+    jp: "この質問はわかりにくいです。",
+    romaji: "Kono shitsumon wa wakarinikui desu."
+  }
+];
+
+const quizEl = document.getElementById('quiz');
+
+questions.forEach((q, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="qnum">Question ${i+1} of ${questions.length}</div>
+    <div class="qtext">${q.en}</div>
+    <input type="text" placeholder="Type your answer in Japanese..." aria-label="Your answer for question ${i+1}">
+    <div class="row">
+      <button class="primary reveal-btn">Reveal answer</button>
+      <button class="clear-btn" type="button">Clear</button>
+    </div>
+    <div class="answer">
+      <div class="jp">${q.jp}</div>
+      <div class="romaji">${q.romaji}</div>
+    </div>
+  `;
+  const revealBtn = card.querySelector('.reveal-btn');
+  const clearBtn = card.querySelector('.clear-btn');
+  const answerBox = card.querySelector('.answer');
+  const input = card.querySelector('input');
+
+  revealBtn.addEventListener('click', () => {
+    const showing = answerBox.classList.toggle('show');
+    revealBtn.textContent = showing ? 'Hide answer' : 'Reveal answer';
+  });
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    input.focus();
+  });
+
+  quizEl.appendChild(card);
+});
+</script>
+</body>
+</html>

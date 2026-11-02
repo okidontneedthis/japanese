@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mixed Verb Forms — Set 2</title>
+<style>
+  :root{
+    --ink:#2b2420;
+    --paper:#faf6ee;
+    --paper2:#f1ead9;
+    --line:#d8cbb0;
+    --accent:#2f6b78;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){--ink:#ece4d6;--paper:#221d18;--paper2:#2a241d;--line:#4a3f30;--accent:#7fc4d4;}
+  }
+  :root[data-theme="dark"]{--ink:#ece4d6;--paper:#221d18;--paper2:#2a241d;--line:#4a3f30;--accent:#7fc4d4;}
+  html,body{height:100%;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Iowan Old Style","Palatino Linotype",Georgia,"Hiragino Mincho ProN",serif;line-height:1.5;}
+  .wrap{max-width:640px;margin:0 auto;padding:2.5rem 1.25rem 4rem;}
+  header{margin-bottom:1.8rem;border-bottom:1px solid var(--line);padding-bottom:1.25rem;}
+  h1{font-size:1.45rem;margin:0 0 .35rem;font-weight:600;}
+  header p{margin:0;opacity:.75;font-size:.95rem;max-width:54ch;}
+  .note{margin-top:1rem;font-size:.86rem;background:var(--paper2);border:1px solid var(--line);border-radius:3px;padding:.55rem .75rem;}
+  .note b{color:var(--accent);}
+  .toggle{margin-top:1rem;display:flex;align-items:center;gap:.5rem;font-size:.9rem;}
+  .toggle input{width:1.05rem;height:1.05rem;accent-color:var(--accent);}
+  .card{background:var(--paper2);border:1px solid var(--line);border-radius:4px;padding:1.2rem 1.3rem;margin-bottom:1rem;}
+  .qtop{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;flex-wrap:wrap;margin-bottom:.35rem;}
+  .qnum{font-size:.8rem;opacity:.6;}
+  .tag{font-size:.74rem;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:.1rem .55rem;}
+  body.hide-tags .tag{display:none;}
+  .qtext{font-size:1.03rem;margin-bottom:.8rem;}
+  input[type="text"]{width:100%;font-family:inherit;font-size:1.03rem;padding:.5rem .6rem;border:1px solid var(--line);border-radius:3px;background:var(--paper);color:var(--ink);}
+  input[type="text"]:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .row{display:flex;gap:.6rem;margin-top:.65rem;flex-wrap:wrap;}
+  button{font-family:inherit;font-size:.88rem;padding:.45rem .85rem;border-radius:3px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;}
+  button.primary{background:var(--accent);border-color:var(--accent);color:var(--paper);}
+  button:hover{opacity:.85;}
+  .answer{margin-top:.85rem;padding-top:.75rem;border-top:1px dashed var(--line);display:none;}
+  .answer.show{display:block;}
+  .jp{font-size:1.1rem;margin-bottom:.3rem;}
+  .romaji{font-size:.88rem;opacity:.7;font-style:italic;}
+  .alt{font-size:.88rem;margin-top:.45rem;opacity:.85;}
+  .alt b{color:var(--accent);}
+  footer{text-align:center;font-size:.85rem;opacity:.55;margin-top:2.5rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Mixed Verb Forms — Set 2</h1>
+    <p>30 new sentences in shuffled order: potential, causative, passive, conditional and volitional, across positive/negative and present/past. Type your attempt, then reveal the answer.</p>
+    <div class="note"><b>Reminder:</b> volitional has no past or negative of its own, so those use 〜(よ)うと思っていた / 〜(よ)うとした / 〜(よ)うとしなかった. Conditionals use 〜たら or 〜ば; where both work, the reveal shows the alternative too.</div>
+    <label class="toggle"><input type="checkbox" id="hideTags"> Hide the form hints (harder: you decide which form fits)</label>
+  </header>
+
+  <div id="quiz"></div>
+
+  <footer>30 questions</footer>
+</div>
+
+<script>
+const questions = [
+  { tag: "Conditional 〜たら · negative", en: "If I don't go, my friend will get angry.", jp: "行かなかったら、友達がおこります。", romaji: "Ikanakattara, tomodachi ga okorimasu.", alt: "行かなければ、友達がおこります。" },
+  { tag: "Potential · positive · past", en: "I could run fast when I was young.", jp: "若いとき、速く走れました。", romaji: "Wakai toki, hayaku hashiremashita." },
+  { tag: "Volitional · positive · present", en: "Let's take a rest.", jp: "休もう。", romaji: "Yasumou." },
+  { tag: "Passive · positive · present", en: "Japanese is spoken in Japan.", jp: "日本では日本語が話されます。", romaji: "Nihon de wa nihongo ga hanasaremasu." },
+  { tag: "Causative · positive · past", en: "My mother let me play outside.", jp: "母は私を外で遊ばせました。", romaji: "Haha wa watashi o soto de asobasemashita." },
+  { tag: "Volitional + と思う · past", en: "I was thinking of buying a new phone.", jp: "新しい電話を買おうと思っていました。", romaji: "Atarashii denwa o kaou to omotte imashita." },
+  { tag: "Conditional 〜ば · positive", en: "If you read this book, you'll understand.", jp: "この本を読めば、わかります。", romaji: "Kono hon o yomeba, wakarimasu.", alt: "この本を読んだら、わかります。" },
+  { tag: "Potential · positive · present", en: "I can cook Japanese food.", jp: "日本料理が作れます。", romaji: "Nihon ryouri ga tsukuremasu." },
+  { tag: "Passive · positive · past", en: "This window was broken by my younger brother.", jp: "このまどは弟にこわされました。", romaji: "Kono mado wa otouto ni kowasaremashita." },
+  { tag: "Causative · positive · past", en: "I made my friend wait.", jp: "私は友達を待たせました。", romaji: "Watashi wa tomodachi o matasemashita." },
+  { tag: "Conditional 〜たら · past (discovery)", en: "When I opened the box, it was empty.", jp: "はこを開けたら、からでした。", romaji: "Hako o aketara, kara deshita." },
+  { tag: "Potential · negative · present", en: "I can't read this kanji.", jp: "このかん字は読めません。", romaji: "Kono kanji wa yomemasen." },
+  { tag: "Volitional · positive · present", en: "Let's cook together.", jp: "いっしょに料理しよう。", romaji: "Issho ni ryouri shiyou." },
+  { tag: "Passive · positive · past", en: "I was asked a question by the teacher.", jp: "私は先生に質問されました。", romaji: "Watashi wa sensei ni shitsumon saremashita." },
+  { tag: "Causative · negative · present", en: "I won't make my younger brother clean.", jp: "私は弟にそうじさせません。", romaji: "Watashi wa otouto ni souji sasemasen." },
+  { tag: "Conditional 〜たら · negative · past", en: "If I hadn't been tired, I would have gone.", jp: "つかれていなかったら、行ったでしょう。", romaji: "Tsukarete inakattara, itta deshou.", alt: "つかれていなければ、行ったでしょう。" },
+  { tag: "Potential · negative · past", en: "My younger brother couldn't open the door.", jp: "弟はドアを開けられませんでした。", romaji: "Otouto wa doa o akeraremasen deshita." },
+  { tag: "Volitional + とする · negative · past", en: "She didn't try to listen.", jp: "彼女は聞こうとしませんでした。", romaji: "Kanojo wa kikou to shimasen deshita." },
+  { tag: "Causative · positive · present", en: "My father makes me write a letter every week.", jp: "父は私に毎週手紙を書かせます。", romaji: "Chichi wa watashi ni maishuu tegami o kakasemasu." },
+  { tag: "Passive · negative · present", en: "I'm not liked by dogs.", jp: "私は犬にきらわれません。", romaji: "Watashi wa inu ni kirawaremasen." },
+  { tag: "Conditional 〜たら · positive", en: "If it's quiet, I can study.", jp: "しずかだったら、勉強できます。", romaji: "Shizuka dattara, benkyou dekimasu." },
+  { tag: "Potential · positive · present", en: "Can you come tomorrow?", jp: "あした来られますか。", romaji: "Ashita koraremasu ka." },
+  { tag: "Volitional · positive · present", en: "Let's go home.", jp: "帰ろう。", romaji: "Kaerou." },
+  { tag: "Passive (indirect) · positive · past", en: "I had my bag stolen. (My bag was stolen on me.)", jp: "私はかばんをぬすまれました。", romaji: "Watashi wa kaban o nusumaremashita." },
+  { tag: "Causative · negative · past", en: "The teacher didn't let the students go home early.", jp: "先生は学生を早く帰らせませんでした。", romaji: "Sensei wa gakusei o hayaku kaerasemasen deshita." },
+  { tag: "Conditional 〜たら · positive", en: "If I have time, I'll travel.", jp: "時間があったら、りょこうします。", romaji: "Jikan ga attara, ryokou shimasu.", alt: "時間があれば、りょこうします。" },
+  { tag: "Potential · negative · present", en: "I can't sleep at night.", jp: "夜、ねられません。", romaji: "Yoru, neraremasen." },
+  { tag: "Volitional + とする · positive · past", en: "I tried to call my friend.", jp: "友達に電話しようとしました。", romaji: "Tomodachi ni denwa shiyou to shimashita." },
+  { tag: "Passive · negative · past", en: "I wasn't scolded by my mother.", jp: "私は母にしかられませんでした。", romaji: "Watashi wa haha ni shikararemasen deshita." },
+  { tag: "Causative · positive · present", en: "The teacher makes us read the book aloud.", jp: "先生は私たちに本を読ませます。", romaji: "Sensei wa watashitachi ni hon o yomasemasu." }
+];
+
+const quizEl = document.getElementById('quiz');
+
+questions.forEach((q, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="qtop"><div class="qnum">Question ${i+1} of ${questions.length}</div><div class="tag">${q.tag}</div></div>
+    <div class="qtext">${q.en}</div>
+    <input type="text" placeholder="Type your answer in Japanese..." aria-label="Your answer for question ${i+1}">
+    <div class="row">
+      <button class="primary reveal-btn">Reveal answer</button>
+      <button class="clear-btn" type="button">Clear</button>
+    </div>
+    <div class="answer">
+      <div class="jp">${q.jp}</div>
+      <div class="romaji">${q.romaji}</div>
+      ${q.alt ? `<div class="alt"><b>Also works:</b> ${q.alt}</div>` : ''}
+    </div>
+  `;
+  const revealBtn = card.querySelector('.reveal-btn');
+  const clearBtn = card.querySelector('.clear-btn');
+  const answerBox = card.querySelector('.answer');
+  const input = card.querySelector('input[type="text"]');
+
+  revealBtn.addEventListener('click', () => {
+    const showing = answerBox.classList.toggle('show');
+    revealBtn.textContent = showing ? 'Hide answer' : 'Reveal answer';
+  });
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    input.focus();
+  });
+
+  quizEl.appendChild(card);
+});
+
+document.getElementById('hideTags').addEventListener('change', e => {
+  document.body.classList.toggle('hide-tags', e.target.checked);
+});
+</script>
+</body>
+</html>

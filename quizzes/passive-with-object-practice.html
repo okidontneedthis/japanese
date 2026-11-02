@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Passive with Object Practice</title>
+<style>
+  :root{
+    --ink:#2b2420;
+    --paper:#faf6ee;
+    --paper2:#f1ead9;
+    --line:#d8cbb0;
+    --accent:#7a4f2a;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){--ink:#ece4d6;--paper:#221d18;--paper2:#2a241d;--line:#4a3f30;--accent:#e3b27f;}
+  }
+  :root[data-theme="dark"]{--ink:#ece4d6;--paper:#221d18;--paper2:#2a241d;--line:#4a3f30;--accent:#e3b27f;}
+  html,body{height:100%;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:"Iowan Old Style","Palatino Linotype",Georgia,"Hiragino Mincho ProN",serif;line-height:1.5;}
+  .wrap{max-width:640px;margin:0 auto;padding:2.5rem 1.25rem 4rem;}
+  header{margin-bottom:1.8rem;border-bottom:1px solid var(--line);padding-bottom:1.25rem;}
+  h1{font-size:1.4rem;margin:0 0 .35rem;font-weight:600;}
+  header p{margin:0;opacity:.75;font-size:.95rem;max-width:54ch;}
+  .note{margin-top:1rem;font-size:.86rem;background:var(--paper2);border:1px solid var(--line);border-radius:3px;padding:.55rem .75rem;}
+  .note b{color:var(--accent);}
+  .card{background:var(--paper2);border:1px solid var(--line);border-radius:4px;padding:1.2rem 1.3rem;margin-bottom:1rem;}
+  .qtop{display:flex;justify-content:space-between;align-items:baseline;gap:.5rem;flex-wrap:wrap;margin-bottom:.35rem;}
+  .qnum{font-size:.8rem;opacity:.6;}
+  .tag{font-size:.74rem;color:var(--accent);border:1px solid var(--line);border-radius:999px;padding:.1rem .55rem;}
+  .qtext{font-size:1.03rem;margin-bottom:.8rem;}
+  input[type="text"]{width:100%;font-family:inherit;font-size:1.03rem;padding:.5rem .6rem;border:1px solid var(--line);border-radius:3px;background:var(--paper);color:var(--ink);}
+  input[type="text"]:focus{outline:2px solid var(--accent);outline-offset:1px;}
+  .row{display:flex;gap:.6rem;margin-top:.65rem;flex-wrap:wrap;}
+  button{font-family:inherit;font-size:.88rem;padding:.45rem .85rem;border-radius:3px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;}
+  button.primary{background:var(--accent);border-color:var(--accent);color:var(--paper);}
+  button:hover{opacity:.85;}
+  .answer{margin-top:.85rem;padding-top:.75rem;border-top:1px dashed var(--line);display:none;}
+  .answer.show{display:block;}
+  .jp{font-size:1.1rem;margin-bottom:.3rem;}
+  .romaji{font-size:.88rem;opacity:.7;font-style:italic;}
+  footer{text-align:center;font-size:.85rem;opacity:.55;margin-top:2.5rem;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>人は人に〜を〜られる</h1>
+    <p>20 sentences practising the passive where the person affected is the topic, the doer takes に, and the thing affected keeps を. Type your attempt, then reveal the answer.</p>
+    <div class="note"><b>Pattern:</b> A は B に (thing) を V-passive. Often the thing is something that belongs to A (a bag, a diary, a foot), and A is affected by what B did. A few sentences here are neutral or positive rather than unpleasant (being praised, being asked).</div>
+    <div class="note"><b>Conjugation:</b> u-verbs: u→a + れる (買う→買われる). ru-verbs: drop る + られる (見る→見られる). する→される.</div>
+  </header>
+
+  <div id="quiz"></div>
+
+  <footer>20 questions</footer>
+</div>
+
+<script>
+const questions = [
+  { tag: "Positive · past", en: "I had my name called by the teacher.", jp: "私は先生に名前を呼ばれました。", romaji: "Watashi wa sensei ni namae o yobaremashita." },
+  { tag: "Positive · past", en: "My younger brother ate my cake (and I was affected).", jp: "私は弟にケーキを食べられました。", romaji: "Watashi wa otouto ni keeki o taberaremashita." },
+  { tag: "Positive · past", en: "I had my bag stolen by a thief.", jp: "私はどろぼうにかばんをぬすまれました。", romaji: "Watashi wa dorobou ni kaban o nusumaremashita." },
+  { tag: "Positive · past", en: "I had my foot stepped on by a stranger on the train.", jp: "私は電車で知らない人に足をふまれました。", romaji: "Watashi wa densha de shiranai hito ni ashi o fumaremashita." },
+  { tag: "Positive · past", en: "I had my photo taken by my friend.", jp: "私は友達に写真をとられました。", romaji: "Watashi wa tomodachi ni shashin o toraremashita." },
+  { tag: "Positive · past", en: "I had my diary read by my mother.", jp: "私は母に日記を読まれました。", romaji: "Watashi wa haha ni nikki o yomaremashita." },
+  { tag: "Positive · past", en: "I had my pen broken by my older brother.", jp: "私は兄にペンをこわされました。", romaji: "Watashi wa ani ni pen o kowasaremashita." },
+  { tag: "Positive · present", en: "I always have my phone looked at by my mother.", jp: "私はいつも母にけいたいでんわを見られます。", romaji: "Watashi wa itsumo haha ni keitai denwa o miraremasu." },
+  { tag: "Positive · past", en: "I had my shoes bitten by the dog.", jp: "私は犬にくつをかまれました。", romaji: "Watashi wa inu ni kutsu o kamaremashita." },
+  { tag: "Positive · past (praise)", en: "I was praised for my essay by the teacher.", jp: "私は先生に作文をほめられました。", romaji: "Watashi wa sensei ni sakubun o homeraremashita." },
+  { tag: "Positive · past", en: "I was lied to by my friend.", jp: "私は友達にうそをつかれました。", romaji: "Watashi wa tomodachi ni uso o tsukaremashita." },
+  { tag: "Positive · past", en: "I had my game broken by my younger sister.", jp: "私は妹にゲームをこわされました。", romaji: "Watashi wa imouto ni geemu o kowasaremashita." },
+  { tag: "Positive · past (request)", en: "I was asked to do the work by the manager.", jp: "私は部長に仕事をたのまれました。", romaji: "Watashi wa buchou ni shigoto o tanomaremashita." },
+  { tag: "Positive · past (neutral)", en: "I was asked my opinion by the company president.", jp: "私は社長に意見を聞かれました。", romaji: "Watashi wa shachou ni iken o kikaremashita." },
+  { tag: "Positive · past", en: "I had all my snacks eaten by my child.", jp: "私は子どもにおやつを全部食べられました。", romaji: "Watashi wa kodomo ni oyatsu o zenbu taberaremashita." },
+  { tag: "Positive · past", en: "I had my secret blabbed by my friend.", jp: "私は友達にひみつをしゃべられました。", romaji: "Watashi wa tomodachi ni himitsu o shaberaremashita." },
+  { tag: "Positive · past", en: "I had my umbrella taken by someone.", jp: "私は誰かにかさをとられました。", romaji: "Watashi wa dareka ni kasa o toraremashita." },
+  { tag: "Negative · past", en: "I didn't have my letter read by my father.", jp: "私は父に手紙を読まれませんでした。", romaji: "Watashi wa chichi ni tegami o yomaremasen deshita." },
+  { tag: "Negative · present", en: "I'm not asked questions by the teacher (in class).", jp: "私は先生にしつもんをされません。", romaji: "Watashi wa sensei ni shitsumon o saremasen." },
+  { tag: "Negative · past", en: "I didn't have my homework looked at by the teacher.", jp: "私は先生にしゅくだいを見られませんでした。", romaji: "Watashi wa sensei ni shukudai o miraremasen deshita." }
+];
+
+const quizEl = document.getElementById('quiz');
+
+questions.forEach((q, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `
+    <div class="qtop"><div class="qnum">Question ${i+1} of ${questions.length}</div><div class="tag">${q.tag}</div></div>
+    <div class="qtext">${q.en}</div>
+    <input type="text" placeholder="Type your answer in Japanese..." aria-label="Your answer for question ${i+1}">
+    <div class="row">
+      <button class="primary reveal-btn">Reveal answer</button>
+      <button class="clear-btn" type="button">Clear</button>
+    </div>
+    <div class="answer">
+      <div class="jp">${q.jp}</div>
+      <div class="romaji">${q.romaji}</div>
+    </div>
+  `;
+  const revealBtn = card.querySelector('.reveal-btn');
+  const clearBtn = card.querySelector('.clear-btn');
+  const answerBox = card.querySelector('.answer');
+  const input = card.querySelector('input[type="text"]');
+
+  revealBtn.addEventListener('click', () => {
+    const showing = answerBox.classList.toggle('show');
+    revealBtn.textContent = showing ? 'Hide answer' : 'Reveal answer';
+  });
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    input.focus();
+  });
+
+  quizEl.appendChild(card);
+});
+</script>
+</body>
+</html>
